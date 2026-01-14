@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorez la Tunisie - Carte Interactive</title>
+    <style>
+        /* ===== Reset & Base ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e85d04 0%, #dc2f02 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* ===== Container Principal ===== */
+        .main-container {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ===== Header ===== */
+        .hero-header {
+            background: linear-gradient(135deg, #d62828 0%, #f77f00 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-header h1 {
+            font-size: 3.5em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-header .subtitle {
+            font-size: 1.4em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* ===== Instructions ===== */
+        .instructions {
+            background: linear-gradient(135deg, #fefae0 0%, #faedcd 100%);
+            padding: 40px;
+            text-align: center;
+            border-bottom: 3px solid #f77f00;
+        }
+
+        .instructions p {
+            font-size: 1.3em;
+            color: #370617;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .instructions .icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ===== Map Container ===== */
+        .map-section {
+            padding: 60px 40px;
+            background: white;
+        }
+
+        .map-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .map-wrapper {
+            position: relative;
+            max-width: 90%;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .map-wrapper img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(214, 40, 40, 0.25);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 4px solid #fcbf49;
+        }
+
+        .map-wrapper:hover img {
+            transform: scale(1.02);
+            box-shadow: 0 30px 80px rgba(214, 40, 40, 0.35);
+        }
+
+        /* ===== Info Card ===== */
+        .info-card {
+            background: linear-gradient(135deg, #e85d04 0%, #f77f00 100%);
+            color: white;
+            padding: 40px;
+            margin: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(232, 93, 4, 0.4);
+        }
+
+        .info-card h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-card p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            background: linear-gradient(135deg, #370617 0%, #6a040f 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 1em;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .hero-header {
+                padding: 50px 20px;
+            }
+
+            .hero-header h1 {
+                font-size: 2.2em;
+            }
+
+            .hero-header .subtitle {
+                font-size: 1.1em;
+            }
+
+            .instructions {
+                padding: 30px 20px;
+            }
+
+            .instructions p {
+                font-size: 1.1em;
+            }
+
+            .map-section {
+                padding: 40px 20px;
+            }
+
+            .info-card {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .info-card h2 {
+                font-size: 1.6em;
+            }
+
+            .info-card p {
+                font-size: 1em;
+            }
+        }
+
+        /* ===== Hover Effect pour zones cliquables ===== */
+        area {
+            cursor: pointer;
+        }
+
+        /* Style pour indiquer les zones interactives */
+        .map-hint {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #d62828;
+            font-style: italic;
+            font-weight: 600;
+        }
+</style>
+</head>
+<body>
+    <div class="main-container">
+        
+        <!-- Hero Header -->
+        <header class="hero-header">
+            <h1>🇹🇳 Explorez la Tunisie</h1>
+            <p class="subtitle">Découvrez les Monuments Célèbres des 24 Gouvernorats</p>
+        </header>
+
+        <!-- Instructions -->
+        <section class="instructions">
+            <div class="icon">👇</div>
+            <p>
+                Parcourez la carte interactive et explorez les monuments emblématiques de chaque gouvernorat tunisien.
+                <strong>Cliquez sur une région</strong> pour découvrir ses trésors architecturaux et culturels !
+            </p>
+        </section>
+
+        <!-- Map Section -->
+        <section class="map-section">
+            <div class="map-container">
+                <div class="map-wrapper">
+                    <img src="Images/tunisia_map.png" usemap="#tunisia-map" alt="Carte Interactive de la Tunisie">
+                    
+                    <!-- Map avec les zones -->
+                    <map name="tunisia-map">
+                        <!-- Monastir -->
+                        <area shape="circle" coords="487,323,15" href="monastir.html" alt="Monastir" title="Découvrir les monuments de Monastir">
+                     
+
+                        <!-- Kef -->
+                        <area shape="circle" coords="198,263,20" href="kef.html" alt="Kef" title="Découvrir les monuments de Kef">
+
+
+                        <!-- Kairouan -->
+                        <area shape="circle" coords="358,325,20" href="kairouan.html" alt="Kairouan" title="Découvrir les monuments de Kairouan">
+
+
+                        <!-- Gafsa -->
+                        <area shape="circle" coords="211,521,15" href="gafsa.html" alt="Gafsa" title="Découvrir les monuments de Gafsa">
+
+
+                        <!-- Touzeur -->
+                        <area shape="circle" coords="92,600,23" href="touzeur.html" alt="Touzeur" title="Découvrir les monuments de Touzeur">
+
+
+                        <!-- Tataouine -->
+                        <area shape="circle" coords="366,855,30" href="tataouine.html" alt="Tataouine" title="Découvrir les monuments de Tataouine">
+
+                        
+                        <!-- Kébili -->
+                        <area shape="circle" coords="229,715,30" href="kebili.html" alt="Kébili" title="Découvrir les monuments de Kébili">
+
+
+                        <!-- Zaghouan -->
+                        <area shape="circle" coords="384,224,20" href="zaghouan.html" alt="Zaghouan" title="Découvrir les monuments de Zaghouan">
+
+
+                        <!-- Medenine -->
+                        <area shape="circle" coords="459,675,15" href="medenine.html" alt="Medenine" title="Découvrir les monuments de Medenine">
+
+
+                        <!-- Béja -->
+                        <area shape="circle" coords="287,179,20" href="beja.html" alt="Béja" title="Découvrir les monuments de Béja">
+
+                        <!-- Tunis -->
+                        <area shape="circle" coords="405,148,13" href="tunis.html" alt="Tunis" title="Découvrir les monuments de Tunis">
+
+                         <!-- Bizerte -->
+                        <area shape="circle" coords="316,104,20" href="bizerte.html" alt="Bizerte" title="Découvrir les monuments de Bizerte">
+                    </map>
+                </div>
+            </div>
+            
+            <p class="map-hint">✨ Cliquez sur les régions pour explorer leurs monuments célèbres</p>
+        </section>
+
+        <!-- Info Card -->
+        <section class="info-card">
+            <h2>🕌 Un Patrimoine Architectural Exceptionnel</h2>
+            <p>
+                De la médina de Tunis aux ribats du Sahel, des amphithéâtres romains aux mosquées séculaires, 
+                chaque gouvernorat tunisien abrite des monuments qui racontent des siècles d'histoire et de culture.
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Explorez la Tunisie - Tous droits réservés</p>
+            <p>Découvrez les monuments emblématiques de chaque région</p>
+        </footer>
+
+    </div>
+</body>
+</html>
